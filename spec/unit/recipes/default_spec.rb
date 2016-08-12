@@ -9,8 +9,9 @@ require 'spec_helper'
 describe 'ebs_manage::default' do
   context 'When all attributes are default, on an unspecified platform' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new
-      runner.converge(described_recipe)
+      ChefSpec::ServerRunner.new do |node|
+        node.default['ipaddress'] = '10.10.1.1'
+      end.runner.converge(described_recipe)
     end
 
     it 'converges successfully' do

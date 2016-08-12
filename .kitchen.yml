@@ -1,22 +1,44 @@
 ---
 driver:
-  name: vagrant
+  name: ec2
+  aws_ssh_key_id: kitchen_testing
+  security_group_ids: ["sg-f4702a93"]
+  region: eu-west-1
+  require_chef_omnibus: true
+  subnet_id: subnet-7e706a27
+  instance_type: t2.small
+  associate_public_ip: true
+  iam_profile_name: kitchen_testing_role
+
+
+
+transport:
+  ssh_key: ~/.ssh/kitchen_testing.pem
 
 provisioner:
-  name: chef_zero
-
-# Uncomment the following verifier to leverage Inspec instead of Busser (the
-# default verifier)
-# verifier:
-#   name: inspec
-#   format: doc
+  name: chef_solo
 
 platforms:
-  - name: ubuntu-16.04
-  - name: centos-7.2
+  - name: ubuntu-14.04
+    driver:
+      image_id: ami-8328bbf0
+      block_device_mappings:
+        - device_name: /dev/xvda
+          ebs:
+            volume_type: standard
+            volume_size: 15
+            delete_on_termination: true
 
 suites:
   - name: default
     run_list:
       - recipe[ebs_manage::default]
     attributes:
+      ebs_manage:
+        region: eu-west-1
+        device: /dev/xvdf
+        mount_point: /mnt/test-mnt
+        format: true
+        force_format: true
+        tag_key: service
+        tag_value: ebs-vol-test1a
