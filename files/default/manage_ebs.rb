@@ -174,7 +174,7 @@ def attach_volume(inst_id, vol_id, dev='/dev/xvdh')
 
   vol.wait_until(max_attempts:20, delay:5) {|nvol| nvol.state == 'in-use' }
 
-  while !system("file -s #{dev} | grep data > /dev/null")
+  while !system("file -s #{dev} | grep 'LVM2\\|data' > /dev/null")
    sleep 2
   end
 
